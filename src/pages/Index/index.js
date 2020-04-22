@@ -1,7 +1,7 @@
 import React, { Component } from "react"
-import { Carousel, Flex, Grid } from "antd-mobile" //轮播图组件
+import { Carousel, Flex, Grid, WingBlank, SearchBar } from "antd-mobile" //轮播图组件
 import { BASE_URL } from "../../utils/axios.js" //自己封装的axios
-import { getSwiper, getGrid } from "../../utils/api/Home/index.js" // home接口
+import { getSwiper, getGrid, getNews } from "../../utils/api/Home/index.js" // home接口
 import Navs from "../../utils/navConfig.js" // 导航栏内容
 import "./index.scss" // 导航样式
 
@@ -15,12 +15,37 @@ class Index extends Component {
     imgHeight: 176,
     // 租房小组 宫格布局
     groups: [],
+    // 最新资讯
+    news: [],
   }
 
   // react挂载
   componentDidMount() {
     this.getSwiper()
     this.getGroups()
+    this.getNew()
+  }
+
+  // 渲染顶部导航
+  renderTopNav = () => {
+    return (
+      <Flex justify="around" className="topNav">
+        <div className="searchBox">
+          <div className="city">
+            北京
+            <i className="iconfont icon-arrow" />
+          </div>
+          <SearchBar
+            value={this.state.keyword}
+            onChange={(v) => this.setState({ keyword: v })}
+            placeholder="请输入小区或地址"
+          />
+        </div>
+        <div className="map">
+          <i key="0" className="iconfont icon-map" />
+        </div>
+      </Flex>
+    )
   }
 
   // 获取轮播图数据
@@ -103,7 +128,7 @@ class Index extends Component {
     )
   }
 
-  // 租房小组 宫格组件请求
+  // 获取 租房小组列表
   getGroups = async () => {
     const res = await getGrid()
     if (res.status === 200) {
@@ -112,7 +137,7 @@ class Index extends Component {
       })
     }
   }
-  // 租房小组 宫格组件
+  // 渲染 租房小组
   getGrids = () => {
     return (
       <div className="group">
@@ -141,6 +166,33 @@ class Index extends Component {
     )
   }
 
+  // 获取最新资讯列表
+  getNew = async () => {
+    const res = await getNews()
+    if (res.status === 200) {
+      this.setState({
+        news: res.body,
+      })
+    }
+  }
+
+  // 渲染最新资讯
+  renderNews() {
+    return this.state.news.map((item) => (
+      <div className="news-item" key={item.id}>
+        <div className="imgwrap">
+          <img className="img" src={`${BASE_URL}${item.imgSrc}`} alt="" />
+        </div>
+        <Flex className="content" direction="column" justify="between">
+          <h3 className="title">{item.title}</h3>
+          <Flex className="info" justify="between">
+            <span>{item.from}</span>
+            <span>{item.date}</span>
+          </Flex>
+        </Flex>
+      </div>
+    ))
+  }
   render() {
     return (
       <div className="index">
@@ -156,7 +208,17 @@ class Index extends Component {
           // 租房小组
           this.getGrids()
         }
-        {}
+        {
+          // 最新资讯
+          <div className="news">
+            <h3 className="group-title">最新资讯</h3>
+            <WingBlank size="md">{this.renderNews()}</WingBlank>
+          </div>
+        }
+        {
+          // 导航栏
+          // this.renderTopNav()
+        }
       </div>
     )
   }
