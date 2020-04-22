@@ -3,7 +3,7 @@ import axios from "axios"
 import { Toast } from "antd-mobile"
 
 // baseurl
-const BASE_URL = "http://api-haoke-dev.itheima.net"
+const BASE_URL = "https://api-haoke-web.itheima.net"
 
 //封装axios
 const api = axios.create({

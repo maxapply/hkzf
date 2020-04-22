@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { Component } from "react"
 import { Carousel, Flex, Grid, WingBlank, SearchBar } from "antd-mobile" //轮播图组件
 import { BASE_URL } from "../../utils/axios.js" //自己封装的axios
@@ -24,6 +25,7 @@ class Index extends Component {
     this.getSwiper()
     this.getGroups()
     this.getNew()
+    // this.loadDate()
   }
 
   // 渲染顶部导航
@@ -31,7 +33,12 @@ class Index extends Component {
     return (
       <Flex justify="around" className="topNav">
         <div className="searchBox">
-          <div className="city">
+          <div
+            className="city"
+            onClick={() => {
+              this.props.history.push("/cityList")
+            }}
+          >
             北京
             <i className="iconfont icon-arrow" />
           </div>
@@ -41,7 +48,12 @@ class Index extends Component {
             placeholder="请输入小区或地址"
           />
         </div>
-        <div className="map">
+        <div
+          className="map"
+          onClick={() => {
+            this.props.history.push("/map")
+          }}
+        >
           <i key="0" className="iconfont icon-map" />
         </div>
       </Flex>
@@ -193,6 +205,14 @@ class Index extends Component {
       </div>
     ))
   }
+
+  // promise重构
+
+  // loadDate = async () => {
+  //   // let res = await Promise.all([1, 2, 3, 4])
+  //   let res = await Promise.all([getSwiper(), getGroups(), getNew()])
+  //   console.log(res)
+  // }
   render() {
     return (
       <div className="index">
@@ -217,7 +237,7 @@ class Index extends Component {
         }
         {
           // 导航栏
-          // this.renderTopNav()
+          this.renderTopNav()
         }
       </div>
     )
