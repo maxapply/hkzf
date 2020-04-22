@@ -50,9 +50,6 @@ class Home extends Component {
           selected={this.state.selectedTab === item.path}
           onPress={() => {
             this.props.history.push(item.path)
-            // this.setState({
-            //   selectedTab: item.path,
-            // })
           }}
         />
       )
