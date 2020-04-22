@@ -22,7 +22,11 @@ class Home extends Component {
 
   componentDidMount() {
     // 监听路由的变化
-    this.props.history.listen((res) => {
+    this.listenRouter()
+  }
+
+  listenRouter = () => {
+    this.unlisten = this.props.history.listen((res) => {
       if (res.pathname !== this.state.selectedTab) {
         this.setState({
           selectedTab: res.pathname,
@@ -30,6 +34,11 @@ class Home extends Component {
       }
     })
   }
+
+  componentWillUnmount() {
+    this.unlisten()
+  }
+
   renderTabBarItems = () => {
     return tabBarData.map((item) => {
       return (

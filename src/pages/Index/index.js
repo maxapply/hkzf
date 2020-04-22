@@ -18,6 +18,8 @@ class Index extends Component {
     groups: [],
     // 最新资讯
     news: [],
+    // 导航栏输入内容
+    keyword: "",
   }
 
   // react挂载
