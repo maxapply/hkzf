@@ -1,9 +1,10 @@
 import React, { Component } from "react"
-import { Carousel, Flex } from "antd-mobile"  //轮播图组件
-import { BASE_URL } from "../../utils/axios.js"  //自己封装的axios
-import { getSwiper } from "../../utils/api/Home/index.js"  // home接口
-import Navs from "../../utils/navConfig.js"  // 导航栏内容
-import "./index.css"  // 导航样式
+import { Carousel, Flex, Grid } from "antd-mobile" //轮播图组件
+import { BASE_URL } from "../../utils/axios.js" //自己封装的axios
+import { getSwiper, getGrid } from "../../utils/api/Home/index.js" // home接口
+import Navs from "../../utils/navConfig.js" // 导航栏内容
+import "./index.scss" // 导航样式
+
 class Index extends Component {
   state = {
     // 轮播图的数据
@@ -12,6 +13,14 @@ class Index extends Component {
     autoplay: false,
     // 轮播图的高度
     imgHeight: 176,
+    // 租房小组 宫格布局
+    groups: [],
+  }
+
+  // react挂载
+  componentDidMount() {
+    this.getSwiper()
+    this.getGroups()
   }
 
   // 获取轮播图数据
@@ -94,11 +103,43 @@ class Index extends Component {
     )
   }
 
-  // react挂载
-  componentDidMount() {
-    this.getSwiper()
+  // 租房小组 宫格组件请求
+  getGroups = async () => {
+    const res = await getGrid()
+    if (res.status === 200) {
+      this.setState({
+        groups: res.body,
+      })
+    }
   }
+  // 租房小组 宫格组件
+  getGrids = () => {
+    return (
+      <div className="group">
+        <Flex className="group-title" justify="between">
+          <h3>租房小组</h3>
+          <span>更多</span>
+        </Flex>
 
+        <Grid
+          square={false}
+          hasLine={false}
+          data={this.state.groups}
+          columnNum={2}
+          renderItem={(item) => (
+            // item结构
+            <Flex className="grid-item" justify="between">
+              <div className="desc">
+                <h3>{item.title}</h3>
+                <p>{item.desc}</p>
+              </div>
+              <img src={`${BASE_URL}${item.imgSrc}`} alt="" />
+            </Flex>
+          )}
+        />
+      </div>
+    )
+  }
 
   render() {
     return (
@@ -111,6 +152,11 @@ class Index extends Component {
           // 栏目导航
           this.NavigationBar()
         }
+        {
+          // 租房小组
+          this.getGrids()
+        }
+        {}
       </div>
     )
   }

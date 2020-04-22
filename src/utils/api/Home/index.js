@@ -5,3 +5,12 @@ import api from "../../axios.js"
 export function getSwiper() {
   return api.get("/home/swiper")
 }
+
+// 租房小组
+export function getGrid(area = "AREA|88cff55c-aaa4-e2e0") {
+  return api.get("/home/groups", {
+    params: {
+      area,
+    },
+  })
+}
