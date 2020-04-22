@@ -1,6 +1,6 @@
-.mapBox {
+#container {
   height: 100%;
-  .container {
-    height: 100%;
-  }
+}
+.mapBox {
+  height: calc(100% - 45px);
 }
