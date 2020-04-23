@@ -32,7 +32,7 @@ api.interceptors.response.use(
 
     const res = {
       body: response.data.body,
-      description: response.data.body,
+      description: response.data.description,
       status: response.data.status,
     }
     // Any status code that lie within the range of 2xx cause this function to trigger

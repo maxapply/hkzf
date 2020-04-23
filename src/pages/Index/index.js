@@ -5,6 +5,7 @@ import { BASE_URL } from "../../utils/axios.js" //自己封装的axios
 import { getSwiper, getGrid, getNews } from "../../utils/api/Home/index.js" // home接口
 import Navs from "../../utils/navConfig.js" // 导航栏内容
 import "./index.scss" // 导航样式
+import { getCityInfo } from "../../utils/api/City/index.js"
 
 class Index extends Component {
   state = {
@@ -20,6 +21,11 @@ class Index extends Component {
     news: [],
     // 导航栏输入内容
     keyword: "",
+    // 当前城市
+    curCity: {
+      label: "--",
+      value: "",
+    },
   }
 
   // react挂载
@@ -28,6 +34,23 @@ class Index extends Component {
     this.getGroups()
     this.getNew()
     // this.loadDate()
+    this.getCurcity()
+  }
+
+  // 获取当前位置
+  getCurcity = () => {
+    let myCity = new window.BMap.LocalCity()
+    myCity.get(async (result) => {
+      const res = await getCityInfo(result.name)
+      if (res.status === 200) {
+        this.setState({
+          curCity: {
+            label: res.body.label,
+            value: res.body.value,
+          },
+        })
+      }
+    })
   }
 
   // 渲染顶部导航
@@ -41,7 +64,7 @@ class Index extends Component {
               this.props.history.push("/cityList")
             }}
           >
-            北京
+            {this.state.curCity.label}
             <i className="iconfont icon-arrow" />
           </div>
           <SearchBar
