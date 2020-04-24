@@ -5,7 +5,8 @@ import { BASE_URL } from "../../utils/axios.js" //自己封装的axios
 import { getSwiper, getGrid, getNews } from "../../utils/api/Home/index.js" // home接口
 import Navs from "../../utils/navConfig.js" // 导航栏内容
 import "./index.scss" // 导航样式
-import { getCityInfo } from "../../utils/api/City/index.js"
+import { getCurrcity } from "../../utils/index.js"
+// import { getCityInfo } from "../../utils/api/City/index.js"
 
 class Index extends Component {
   state = {
@@ -38,19 +39,22 @@ class Index extends Component {
   }
 
   // 获取当前位置
-  getCurcity = () => {
-    let myCity = new window.BMap.LocalCity()
-    myCity.get(async (result) => {
-      const res = await getCityInfo(result.name)
-      if (res.status === 200) {
-        this.setState({
-          curCity: {
-            label: res.body.label,
-            value: res.body.value,
-          },
-        })
-      }
+  getCurcity = async () => {
+    const res = await getCurrcity()
+    // console.log(res)
+
+    // let myCity = new window.BMap.LocalCity()
+    // myCity.get(async (result) => {
+    //   const res = await getCityInfo(result.name)
+    // if (res.status === 200) {
+    this.setState({
+      curCity: {
+        label: res.label,
+        value: res.value,
+      },
     })
+    // }
+    // })
   }
 
   // 渲染顶部导航

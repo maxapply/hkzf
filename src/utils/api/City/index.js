@@ -17,3 +17,8 @@ export function getCityList(level = 1) {
     },
   })
 }
+
+//获取热门城市
+export function getCityData() {
+  return api.get("/area/hot")
+}
