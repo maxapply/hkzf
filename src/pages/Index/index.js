@@ -41,20 +41,12 @@ class Index extends Component {
   // 获取当前位置
   getCurcity = async () => {
     const res = await getCurrcity()
-    // console.log(res)
-
-    // let myCity = new window.BMap.LocalCity()
-    // myCity.get(async (result) => {
-    //   const res = await getCityInfo(result.name)
-    // if (res.status === 200) {
     this.setState({
       curCity: {
         label: res.label,
         value: res.value,
       },
     })
-    // }
-    // })
   }
 
   // 渲染顶部导航
@@ -110,13 +102,7 @@ class Index extends Component {
   // 渲染轮播图
   renderSwiper = () => {
     return (
-      <Carousel
-        autoplay={this.state.autoplay}
-        infinite
-        autoplayInterval={2000}
-        // beforeChange={(from, to) => console.log(`slide from ${from} to ${to}`)}
-        // afterChange={(index) => console.log("slide to", index)}
-      >
+      <Carousel autoplay={this.state.autoplay} infinite autoplayInterval={2000}>
         {this.state.data.map((val) => (
           <a
             key={val}
@@ -160,7 +146,7 @@ class Index extends Component {
                 this.props.history.push(item.path)
               }}
             >
-              <img src={item.img} />
+              <img alt="" src={item.img} />
               <p>{item.title}</p>
             </Flex.Item>
           )

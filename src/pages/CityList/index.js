@@ -2,9 +2,9 @@
 import React, { Component } from "react"
 import { getCityList, getCityData } from "../../utils/api/City"
 // 获取当前定位
-import { getCurrcity } from "../../utils/index"
+import { getCurrcity, CURR_CITY, setLocal } from "../../utils/index"
 
-import { NavBar, Icon } from "antd-mobile" // Navbar 导航栏
+import { NavBar, Icon, Toast } from "antd-mobile" // Navbar 导航栏
 
 // list渲染
 import { List, AutoSizer } from "react-virtualized"
@@ -15,33 +15,12 @@ class CityList extends Component {
   state = {
     CityList: {},
     cityIndex: [],
+    // 当前滚动到的索引行
+    activeIndex: 0,
   }
 
   componentDidMount() {
     this.getCityList()
-  }
-
-  // 获取城市列表的数据
-  getCityList = async () => {
-    const res = await getCityList()
-    if (res.status === 200) {
-      const { CityList, cityIndex } = this.formatCityList(res.body)
-      // 获取热门城市
-      const { status, body } = await getCityData()
-      if (status === 200) {
-        CityList["hot"] = body
-        cityIndex.unshift("hot")
-        // console.log(CityList, cityIndex)
-      }
-      const arr = await getCurrcity()
-      CityList["#"] = [arr]
-      cityIndex.unshift("#")
-
-      this.setState({
-        CityList,
-        cityIndex,
-      })
-    }
   }
 
   // 格式化城市列表
@@ -72,14 +51,24 @@ class CityList extends Component {
   }
 
   // 格式化列表title
-  formatLetter = (letter) => {
+  formatLetter = (letter, isRight) => {
     switch (letter) {
       case "#":
-        return "当前城市"
+        return isRight ? "当" : "当前城市"
       case "hot":
-        return "热门城市"
+        return isRight ? "热" : "热门城市"
       default:
         return letter.toUpperCase()
+    }
+  }
+
+  changeCity = (item) => {
+    const hasData = ["北京", "上海", "广州", "深圳"]
+    if (hasData.includes(item.label)) {
+      setLocal(CURR_CITY, JSON.stringify(item))
+      this.props.history.push("/")
+    } else {
+      Toast.info("该城市暂无房源数据")
     }
   }
 
@@ -101,13 +90,17 @@ class CityList extends Component {
     return (
       <div key={key} style={style} className="city-item">
         <div className="title">{this.formatLetter(letter)}</div>
-        {item.map((item) => {
-          return (
-            <div key={item.value} className="name">
-              {item.label}
-            </div>
-          )
-        })}
+        {item.map((item) => (
+          <div
+            key={item.value}
+            onClick={() => {
+              this.changeCity(item)
+            }}
+            className="name"
+          >
+            {item.label}
+          </div>
+        ))}
       </div>
     )
   }
@@ -124,6 +117,68 @@ class CityList extends Component {
     )
   }
 
+  // 获取城市列表的数据
+  getCityList = async () => {
+    let res = await getCityList()
+    if (res.status === 200) {
+      const { CityList, cityIndex } = this.formatCityList(res.body)
+      // 获取热门城市
+      const { status, body } = await getCityData()
+      if (status === 200) {
+        CityList["hot"] = body
+        cityIndex.unshift("hot")
+      }
+      const arr = await getCurrcity()
+      cityIndex.unshift("#")
+      CityList["#"] = [arr]
+
+      this.setState({
+        CityList,
+        cityIndex,
+      })
+    }
+  }
+
+  // 动态计算高度
+  excueHeight = ({ index }) => {
+    const { CityList, cityIndex } = this.state
+    const curKey = cityIndex[index]
+    return 36 + CityList[curKey].length * 50
+  }
+
+  // 渲染右侧索引
+  renderCityIndex = () => {
+    const { cityIndex, activeIndex } = this.state
+    return cityIndex.map((item, index) => {
+      return (
+        <li
+          key={item}
+          className="city-index-item"
+          onClick={() => {
+            // 点击的时候定位列表
+            this.listRef.scrollToRow(index)
+            // this.setState({
+            //   activeIndex: index,
+            // })
+          }}
+        >
+          <span className={activeIndex === index ? "index-active" : ""}>
+            {this.formatLetter(item, true)}
+          </span>
+        </li>
+      )
+    })
+  }
+
+  // 每次滚动触发
+  onRowsRendered = ({ startIndex }) => {
+    if (this.state.activeIndex !== startIndex) {
+      this.setState({
+        activeIndex: startIndex,
+      })
+    }
+  }
+
   render() {
     return (
       <div className="cityList">
@@ -135,14 +190,19 @@ class CityList extends Component {
         <AutoSizer>
           {({ height, width }) => (
             <List
+              onRowsRendered={this.onRowsRendered}
+              ref={(ele) => (this.listRef = ele)}
+              scrollToAlignment="start"
               height={height}
               rowCount={this.state.cityIndex.length}
-              rowHeight={120}
+              rowHeight={this.excueHeight}
               rowRenderer={this.rowRenderer}
               width={width}
             />
           )}
         </AutoSizer>
+        {/* 右侧索引列表 */}
+        <ul className="city-index">{this.renderCityIndex()}</ul>
       </div>
     )
   }

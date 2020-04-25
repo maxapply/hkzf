@@ -5,16 +5,22 @@ const CURR_CITY = "curr_city"
 // 封装本地存储方法
 // 添加本地存储
 export const setLocal = (key, val) => {
-  return window.localStorage.setItem(key, val)
+  return window.sessionStorage.setItem(key, val)
+
+  // return window.localStorage.setItem(key, val)
 }
 // 获取本地存储
 export const getLocal = (key) => {
-  return localStorage.getItem(key)
+  return window.sessionStorage.getItem(key)
+
+  // return window.localStorage.getItem(key)
 }
 
 // 删除本地存储
 export const deLocal = (key) => {
-  return window.localStorage.removeItem(key)
+  return window.sessionStorage.removeItem(key)
+
+  // return window.localStorage.removeItem(key)
 }
 
 const getCityName = async () => {
@@ -37,9 +43,9 @@ export async function getCurrcity() {
   let res = await getCityName()
   let reslName = res.substr(0, 2)
 
-  console.log(reslName)
+  // console.log(reslName)
 
-  if (!curCity || reslName !== curCity.label) {
+  if (!curCity) {
     // 如果没有
     // 获取定位信息，返回promise对象，resolve结果
     return new Promise(async (resolve, reject) => {
@@ -48,7 +54,7 @@ export async function getCurrcity() {
       if (status === 200) {
         // 存储到本地
         setLocal(CURR_CITY, JSON.stringify(body))
-        console.log(body)
+        // console.log(body)
 
         // 传递数据
         resolve(body)
@@ -61,3 +67,5 @@ export async function getCurrcity() {
     return Promise.resolve(curCity)
   }
 }
+
+export { CURR_CITY }
