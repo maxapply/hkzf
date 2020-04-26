@@ -9,3 +9,15 @@ export function getFilter(id) {
     },
   })
 }
+
+// 根据条件查询房屋
+export function getHouses(cityId, filters, start, end) {
+  return api.get("/houses", {
+    params: {
+      cityId,
+      ...filters,
+      start,
+      end,
+    },
+  })
+}

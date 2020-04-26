@@ -88,14 +88,33 @@ const province = [
 ]
 
 export default class FilterPicker extends Component {
+  state = {
+    // 当前选中的值
+    value: this.props.value,
+  }
   render() {
+    const { data, cols } = this.props
     return (
       <>
         {/* 选择器组件： */}
-        <PickerView data={province} value={null} cols={3} />
+        <PickerView
+          data={data}
+          value={this.state.value}
+          onChange={(v) => {
+            this.setState({
+              value: v,
+            })
+          }}
+          cols={cols}
+        />
 
         {/* 底部按钮 */}
-        <FilterFooter onCancle={this.props.onCancle} onOk={this.props.onOk} />
+        <FilterFooter
+          onCancle={this.props.onCancle}
+          onOk={() => {
+            this.props.onOk(this.state.value)
+          }}
+        />
       </>
     )
   }
