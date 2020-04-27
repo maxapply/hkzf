@@ -7,6 +7,8 @@ import Home from "./pages/Home/index.js"
 import CityList from "./pages/CityList/index.js"
 import Map from "./pages/Map/index.js"
 import NotFound from "./pages/NotFound/index.js"
+import HouseDetail from "./components/HouseDetail/index.js"
+import Login from "./pages/Login/index.js"
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
           <Route path="/home" component={Home}></Route>
           <Route path="/cityList" component={CityList}></Route>
           <Route path="/map" component={Map}></Route>
+          <Route path="/detail/:id" component={HouseDetail}></Route>
+          <Route path="/login" component={Login}></Route>
           {/* 配置404页面 */}
           <Route component={NotFound}> </Route>
         </Switch>

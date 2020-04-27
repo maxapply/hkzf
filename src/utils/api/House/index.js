@@ -21,3 +21,8 @@ export function getHouses(cityId, filters, start, end) {
     },
   })
 }
+
+// 根据房屋获取具体信息
+export function getHousesId(id) {
+  return api.get(`/houses/${id}`)
+}
