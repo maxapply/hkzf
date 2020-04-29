@@ -1,31 +1,67 @@
-import React, { Component } from 'react'
-import { Flex, WingBlank, WhiteSpace, NavBar } from 'antd-mobile'
+import React, { Component } from "react"
+import { Flex, WingBlank, WhiteSpace, NavBar, Toast } from "antd-mobile"
 
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom"
 
-import styles from './index.module.css'
+import styles from "./index.module.css"
+import { getLogin } from "../../utils/api/Login/index.js"
+import { setLocal, HKZF_TOKEN } from "../../utils"
+
+import { withFormik } from "formik"
 
 // 验证规则：
 // const REG_UNAME = /^[a-zA-Z_\d]{5,8}$/
 // const REG_PWD = /^[a-zA-Z_\d]{5,12}$/
 
 class Login extends Component {
+  // state = {
+  //   username: "",
+  //   password: "",
+  // }
+
+  // login = async (e) => {
+  //   e.preventDefault()
+  //   const { username, password } = this.state
+  //   const { status, body, description } = await getLogin({ username, password })
+  //   if (status === 200) {
+  //     Toast.success(description)
+  //     setLocal(HKZF_TOKEN, body.token)
+  //     this.props.history.push("/")
+  //   } else {
+  //     Toast.fail(description)
+  //   }
+  // }
+  // getInFormation = (e) => {
+  //   this.setState({
+  //     [e.target.name]: e.target.value,
+  //   })
+  //   console.log(e.target.value)
+  // }
+
   render() {
+    const {
+      values,
+      touched,
+      errors,
+      handleChange,
+      handleBlur,
+      handleSubmit,
+    } = this.props
     return (
       <div className={styles.root}>
         {/* 顶部导航 */}
-        <NavBar mode="light">
-          账号登录
-        </NavBar>
+        <NavBar mode="light">账号登录</NavBar>
         <WhiteSpace size="xl" />
 
         {/* 登录表单 */}
         <WingBlank>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className={styles.formItem}>
               <input
                 className={styles.input}
                 name="username"
+                value={values.username}
+                onChange={handleChange}
                 placeholder="请输入账号"
               />
             </div>
@@ -36,6 +72,8 @@ class Login extends Component {
                 className={styles.input}
                 name="password"
                 type="password"
+                value={values.password}
+                onChange={handleChange}
                 placeholder="请输入密码"
               />
             </div>
@@ -58,4 +96,34 @@ class Login extends Component {
   }
 }
 
-export default Login
+const NewLogin = withFormik({
+  mapPropsToValues: () => ({ username: "", password: "" }),
+
+  // Custom sync validation
+  // validate: (values) => {
+  //   const errors = {}
+
+  //   if (!values.name) {
+  //     errors.name = "Required"
+  //   }
+
+  //   return errors
+  // },
+
+  handleSubmit: async (values, frb) => {
+    const { username, password } = values
+    const { status, body, description } = await getLogin({ username, password })
+    if (status === 200) {
+      Toast.success(description)
+      setLocal(HKZF_TOKEN, body.token)
+
+      frb.props.history.push("/")
+    } else {
+      Toast.fail(description)
+    }
+  },
+
+  displayName: "BasicForm",
+})(Login)
+
+export default NewLogin

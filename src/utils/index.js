@@ -1,6 +1,7 @@
 import { getCityInfo } from "./api/City/index.js"
 
-const CURR_CITY = "curr_city"
+const CURR_CITY = "curr_city",
+  HKZF_TOKEN = "HKZF_TOKEN"
 // 封装本地存储方法
 // 添加本地存储
 export const setLocal = (key, val) => {
@@ -61,4 +62,4 @@ export async function getCurrcity() {
   }
 }
 
-export { CURR_CITY }
+export { CURR_CITY, HKZF_TOKEN }
