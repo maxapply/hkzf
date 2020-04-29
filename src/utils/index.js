@@ -4,18 +4,36 @@ const CURR_CITY = "curr_city",
   HKZF_TOKEN = "HKZF_TOKEN"
 // 封装本地存储方法
 // 添加本地存储
-export const setLocal = (key, val) => {
+export function setLocal(key, val) {
   return window.localStorage.setItem(key, val)
 }
 // 获取本地存储
-export const getLocal = (key) => {
+export function getLocal(key) {
   return localStorage.getItem(key)
 }
 
 // 删除本地存储
-export const deLocal = (key) => {
+export function deLocal(key) {
   return window.localStorage.removeItem(key)
 }
+
+// 封装持久化token
+export function setToken(token) {
+  setLocal(HKZF_TOKEN, token)
+}
+
+export function getToken() {
+  return getLocal(HKZF_TOKEN)
+}
+
+export function removeToken() {
+  console.log("1")
+
+  deLocal(HKZF_TOKEN)
+}
+
+// 判断鉴权
+const isAuth = () => !!getToken()
 
 const getCityName = async () => {
   return new Promise((resolve, reject) => {
@@ -62,4 +80,4 @@ export async function getCurrcity() {
   }
 }
 
-export { CURR_CITY, HKZF_TOKEN }
+export { CURR_CITY, HKZF_TOKEN, isAuth }
