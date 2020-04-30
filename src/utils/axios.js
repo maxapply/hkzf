@@ -1,6 +1,7 @@
 import axios from "axios"
 // loading组件
 import { Toast } from "antd-mobile"
+import { getToken } from "./index.js"
 
 // baseurl
 const BASE_URL = "https://api-haoke-web.itheima.net"
@@ -14,6 +15,13 @@ const api = axios.create({
 api.interceptors.request.use(
   function (config) {
     Toast.loading("Loading...", 0)
+    const switchUser = ["/user/registered", "/user/login"]
+    const { url, headers } = config
+
+    if (url.startsWith("/user") && !switchUser.includes(url)) {
+      headers.authorization = getToken()
+    }
+
     // Do something before request is sent
     return config
   },

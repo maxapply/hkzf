@@ -5,6 +5,9 @@ import styles from "./index.module.css"
 import HousePackage from "../HousePackage"
 import { BASE_URL } from "../../utils/axios"
 import { getHousesId } from "../../utils/api/House"
+import { getFav, addFav, delFav } from "../../utils/api/Login"
+import { isAuth } from "../../utils"
+
 // 猜你喜欢
 const recommendHouses = [
   {
@@ -102,6 +105,62 @@ export default class HouseDetail extends Component {
 
     // 获取房屋数据
     this.getHouseDetail()
+
+    // 获取房源是否收藏
+    this.checkHouseFav()
+  }
+
+  checkHouseFav = async () => {
+    // console.log(this.props)
+    if (isAuth()) return
+    // console.log(this.props.location.pathname)
+    const { id } = this.props.match.params
+    const { status, body } = await getFav(id)
+    if (status === 200) {
+      this.setState({
+        isFavorite: body.isFavorite,
+      })
+    }
+  }
+
+  handleFavorite = async () => {
+    const { location, history } = this.props
+    if (!isAuth()) {
+      alert("提示：", "登录后才可以收藏，确定要去登录吗???", [
+        { text: "取消" },
+        {
+          text: "去登录",
+          onPress: async () => {
+            // history.push("/login", { backUrl: location.pathname })
+            history.push({
+              pathname: "/login",
+              data: { backUrl: location.pathname },
+            })
+          },
+        },
+      ])
+    }
+
+    //
+    const { isFavorite } = this.state
+    const { id } = this.props.match.params
+    if (!isFavorite) {
+      const { status, description } = await addFav(id)
+      if (status === 200) {
+        Toast.info(description)
+        this.setState({
+          isFavorite: true,
+        })
+      }
+    } else {
+      const { status, description } = await delFav(id)
+      if (status === 200) {
+        Toast.info(description)
+        this.setState({
+          isFavorite: false,
+        })
+      }
+    }
   }
 
   /* 
@@ -287,7 +346,8 @@ export default class HouseDetail extends Component {
                 {oriented.join("、")}
               </div>
               <div>
-                <span className={styles.title}>类型：</span>普通住宅
+                <span className={styles.title}>类型：</span>
+                普通住宅
               </div>
             </Flex.Item>
           </Flex>

@@ -117,14 +117,21 @@ const NewLogin = withFormik({
       .matches(REG_PWD, "长度为5到12位，只能出现数字、字母、下划线"),
   }),
 
-  handleSubmit: async (values, frb) => {
+  handleSubmit: async (values, { props: { history, location } }) => {
     const { username, password } = values
     const { status, body, description } = await getLogin({ username, password })
     if (status === 200) {
-      Toast.success(description)
+      Toast.success(description, 2)
       setLocal(HKZF_TOKEN, body.token)
 
-      frb.props.history.push("/home/profile")
+      // console.log(this.props.history.location.data.backUrl)
+      if (location.data?.backUrl) {
+        history.push(location.data.backUrl)
+      } else {
+        history.push("/home/profile")
+      }
+
+      // frb.props.history.push("/home/profile")
     } else {
       Toast.fail(description)
     }

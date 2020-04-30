@@ -14,7 +14,7 @@ export function getLocal(key) {
 
 // 删除本地存储
 export function deLocal(key) {
-  return window.localStorage.removeItem(key)
+  return localStorage.removeItem(key)
 }
 
 // 封装持久化token

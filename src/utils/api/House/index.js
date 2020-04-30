@@ -26,3 +26,13 @@ export function getHouses(cityId, filters, start, end) {
 export function getHousesId(id) {
   return api.get(`/houses/${id}`)
 }
+
+// 小区关键词查询
+export function getCommunity(id, name) {
+  return api.get("/area/community", {
+    params: {
+      id,
+      name,
+    },
+  })
+}
