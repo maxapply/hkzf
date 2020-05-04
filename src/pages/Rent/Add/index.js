@@ -10,11 +10,13 @@ import {
   Modal,
   NavBar,
   Icon,
+  Toast,
 } from "antd-mobile"
 
 import HousePackage from "../../../components/HousePackage"
 
 import styles from "./index.module.css"
+import { postImage, pubHouse } from "../../../utils/api/House"
 
 const alert = Modal.alert
 
@@ -97,6 +99,76 @@ export default class RentAdd extends Component {
   getValue = (val, name) => {
     this.setState({
       [name]: val,
+    })
+  }
+  // 点击发布
+  addHouse = async () => {
+    const {
+      community,
+      price,
+      size,
+      roomType,
+      floor,
+      oriented,
+      description,
+      supporting,
+      tempSlides,
+      title,
+    } = this.state
+    if (!price || !size || !title) {
+      return Toast.info("请输入房源基本信息！", 1)
+    }
+
+    // const { tempSlides } = this.state
+    let serverImg
+    // if (tempSlides.length) {
+    let fd = new FormData()
+
+    tempSlides.forEach((item) => fd.append("file", item.file))
+    const res = await postImage(fd)
+    console.log(res)
+
+    if (res.status === 200) {
+      serverImg = res.body.join("|")
+    } else {
+      Toast.fail(res.description, 2)
+    }
+
+    const otd = {
+      community: community.id,
+      price,
+      size,
+      roomType,
+      floor,
+      oriented,
+      description,
+      supporting,
+      houseImg: serverImg,
+      title,
+    }
+    const { status } = await pubHouse(otd)
+    if (status === 200) {
+      Toast.success("发布信息成功", 1, () => {
+        this.props.history.replace("/rent")
+      })
+    } else {
+      if (status === 400) {
+        Toast.info("请重新登录！", 1, () => {
+          this.props.history.push("/login", {
+            backUrl: this.props.location.pathname,
+          })
+        })
+      }
+    }
+
+    // }
+  }
+
+  // 添加要上传的图片
+  handleImage = (files, operationType, index) => {
+    // console.log(files, operationType, index)
+    this.setState({
+      tempSlides: files,
     })
   }
 
@@ -208,6 +280,7 @@ export default class RentAdd extends Component {
             files={tempSlides}
             multiple={true}
             className={styles.imgpicker}
+            onChange={this.handleImage}
           />
         </List>
 
@@ -216,7 +289,14 @@ export default class RentAdd extends Component {
           renderHeader={() => "房屋配置"}
           data-role="rent-list"
         >
-          <HousePackage select />
+          <HousePackage
+            select
+            onSelect={(selectNames) => {
+              this.setState({
+                supporting: selectNames.join("|"),
+              })
+            }}
+          />
         </List>
 
         <List

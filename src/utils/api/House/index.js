@@ -36,3 +36,13 @@ export function getCommunity(id, name) {
     },
   })
 }
+
+// 房屋图像上传
+export function postImage(data) {
+  return api.post(`/houses/image`, data)
+}
+
+// 发布房源
+export function pubHouse(body) {
+  return api.post("/user/houses", body)
+}
