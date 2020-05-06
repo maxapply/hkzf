@@ -46,3 +46,12 @@ export function postImage(data) {
 export function pubHouse(body) {
   return api.post("/user/houses", body)
 }
+
+// 查询房源数据
+export function getMapHouse(id) {
+  return api.get("/area/map", {
+    params: {
+      id,
+    },
+  })
+}
